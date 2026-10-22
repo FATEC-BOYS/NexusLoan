@@ -162,6 +162,21 @@ class MultiTenantIntegrationTest {
                 .andExpect(jsonPath("$.errors", hasSize(2)));
     }
 
+    @Test
+    void rejectsPasswordAboveBcryptByteLimitWithBadRequest() throws Exception {
+        String slug = "tenant-" + UUID.randomUUID().toString().substring(0, 8);
+        mvc.perform(post("/api/tenants").contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(Map.of(
+                                "tenantName", "Tenant " + slug,
+                                "tenantSlug", slug,
+                                "adminName", "Admin",
+                                "adminEmail", "admin@" + slug + ".example.com",
+                                // 38 chars, mas 76 bytes em UTF-8
+                                "adminPassword", "\uD83D\uDE00".repeat(19)))))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errors[0].field").value("adminPassword"));
+    }
+
     // ---------------------------------------------------------------- helpers
 
     private String currentSlugA;

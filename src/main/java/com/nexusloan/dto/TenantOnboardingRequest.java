@@ -1,5 +1,6 @@
 package com.nexusloan.dto;
 
+import com.nexusloan.dto.validation.MaxUtf8Bytes;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -14,5 +15,5 @@ public record TenantOnboardingRequest(
         String tenantSlug,
         @NotBlank @Size(max = 120) String adminName,
         @NotBlank @Email @Size(max = 160) String adminEmail,
-        @NotBlank @Size(min = 8, max = 72) String adminPassword) {
+        @NotBlank @Size(min = 8) @MaxUtf8Bytes(72) String adminPassword) {
 }

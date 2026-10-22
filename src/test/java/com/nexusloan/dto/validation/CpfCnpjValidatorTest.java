@@ -23,7 +23,8 @@ class CpfCnpjValidatorTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"52998224724", "11222333000182", "11111111111", "00000000000000", "123", ""})
+    @ValueSource(strings = {"52998224724", "11222333000182", "11111111111", "00000000000000", "123", "",
+            "abc52998224725xyz", "529 982 247 25", "529.982.24725", "11.222.333.0001-81", " 52998224725"})
     void rejectsInvalidDocuments(String document) {
         assertThat(validator.isValid(document, null)).isFalse();
     }

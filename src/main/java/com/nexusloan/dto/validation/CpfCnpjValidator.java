@@ -1,9 +1,15 @@
 package com.nexusloan.dto.validation;
 
+import java.util.regex.Pattern;
+
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 public class CpfCnpjValidator implements ConstraintValidator<CpfCnpj, String> {
+
+    /** Formatos aceitos: só dígitos, ou com a máscara completa de CPF ou CNPJ. */
+    private static final Pattern ACCEPTED_FORMAT = Pattern.compile(
+            "\\d{11}|\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}|\\d{14}|\\d{2}\\.\\d{3}\\.\\d{3}/\\d{4}-\\d{2}");
 
     private static final int CPF_LENGTH = 11;
     private static final int CNPJ_LENGTH = 14;
@@ -13,6 +19,9 @@ public class CpfCnpjValidator implements ConstraintValidator<CpfCnpj, String> {
     public boolean isValid(String value, ConstraintValidatorContext context) {
         if (value == null) {
             return true; // obrigatoriedade fica a cargo do @NotBlank
+        }
+        if (!ACCEPTED_FORMAT.matcher(value).matches()) {
+            return false;
         }
         String digits = onlyDigits(value);
         return switch (digits.length()) {
